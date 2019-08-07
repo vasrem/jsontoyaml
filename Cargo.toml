@@ -1,0 +1,11 @@
+[package]
+name = "jsontoyaml"
+version = "0.1.0"
+authors = ["Vasilis Remmas <vasremm@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+serde = "1.0"
+serde_yaml = "0.8"
+serde_json = "1.0"
+clap = "2.0"
