@@ -8,21 +8,26 @@ pub mod convert {
         use super::*;
         // converts a json parsed from stdin into a yaml and prints it
         pub fn run() {
-            let json = parse_json().expect("failed to parse json");
-            match to_yaml(&json) {
+            let buffer = parse_stdin().expect("failed to parse string from stdin");
+            let _json = parse_json(&buffer).expect("failed to parse json");
+            match to_yaml(&buffer) {
                 Ok(s) => println!("{}", s),
                 Err(e) => println!("{}", e),
             }
         }
 
-        // parses json from stdin
-        fn parse_json() -> io::Result<String> {
+        // parses string from stdin
+        fn parse_stdin() -> io::Result<String> {
             let mut buffer = String::new();
             io::stdin().read_to_string(&mut buffer)?;
-
-            // try to parse json
-            let _json: ValueJSON = serde_json::from_str(&buffer)?;
             Ok(buffer)
+        }
+
+        // parses json from string
+        fn parse_json(s: &str) -> Result<(), serde_json::Error> {
+            // try to parse json
+            let _json: ValueJSON = serde_json::from_str(s)?;
+            Ok(())
         }
 
         // converts json string to yaml string
@@ -38,19 +43,24 @@ pub mod convert {
         use super::*;
         // converts a yaml parsed from stdin into a json and prints it
         pub fn run() {
-            let yaml = parse_yaml().expect("failed to parse yaml");
+            let buffer = parse_stdin().expect("failed to parse string from stdin");
+            let yaml = parse_yaml(&buffer).expect("failed to parse yaml");
             match to_json(&yaml) {
                 Ok(s) => println!("{}", s),
                 Err(e) => println!("{}", e),
             }
         }
 
-        // parses yaml from stdin
-        fn parse_yaml() -> Result<serde_yaml::Mapping, serde_yaml::Error> {
+        // parses string from stdin
+        fn parse_stdin() -> io::Result<String> {
             let mut buffer = String::new();
-            io::stdin().read_to_string(&mut buffer).unwrap();
+            io::stdin().read_to_string(&mut buffer)?;
+            Ok(buffer)
+        }
 
-            let yaml: serde_yaml::Mapping = serde_yaml::from_str(&buffer)?;
+        // parses yaml from string
+        fn parse_yaml(s: &str) -> Result<serde_yaml::Mapping, serde_yaml::Error> {
+            let yaml: serde_yaml::Mapping = serde_yaml::from_str(&s)?;
             Ok(yaml)
         }
 
