@@ -37,6 +37,23 @@ pub mod convert {
             Ok(output)
         }
 
+        #[test]
+        fn test_to_yaml() {
+            let input = r#"{"field1":"val1","arr":["val1", "val2"]}"#;
+            let expected = r#"---
+field1: val1
+arr:
+  - val1
+  - val2"#;
+
+            let o = match to_yaml(&input) {
+                Ok(s) => s,
+                Err(_) => panic!(),
+            };
+
+            assert_eq!(o, expected);
+        }
+
     }
 
     pub mod yaml_to_json {
@@ -70,6 +87,44 @@ pub mod convert {
             let output = serde_json::to_string(&json)?;
 
             Ok(output)
+        }
+
+        #[test]
+        fn test_to_json() {
+            let raw_input = r#"---
+json:
+  - rigid
+  - better for data interchange
+yaml:
+  - slim and flexible
+  - better for configuration
+object:
+  key: value
+  array:
+    - null_value:
+    - array:
+      - test
+      - test123: hey
+    - boolean: true
+    - integer: 1
+paragraph: >
+   Blank lines denote
+
+   paragraph breaks
+content: |-
+   Or we
+   can auto
+   convert line breaks
+   to save space"#;
+            let input = parse_yaml(&raw_input).unwrap();
+            let expected = r#"{"content":"Or we\ncan auto\nconvert line breaks\nto save space","json":["rigid","better for data interchange"],"object":{"array":[{"null_value":null},{"array":["test",{"test123":"hey"}]},{"boolean":true},{"integer":1}],"key":"value"},"paragraph":"Blank lines denote\nparagraph breaks\n","yaml":["slim and flexible","better for configuration"]}"#;
+
+            let o = match to_json(&input) {
+                Ok(s) => s,
+                Err(_) => panic!(),
+            };
+
+            assert_eq!(o, expected);
         }
 
         // converts yaml struct to json value
