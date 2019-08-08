@@ -152,7 +152,6 @@ content: |-
                                         None => panic!("could not parse mapping in sequence"),
                                     };
                                     vec.push(to_json_object(obj));
-                                    m.insert(key.clone(), to_json_object(obj));
                                 } else {
                                     vec.push(create_json_value(o));
                                 }
@@ -178,12 +177,12 @@ content: |-
                 }
             } else if v.is_bool() {
                 match v.as_bool() {
-                    Some(b) => ValueJSON::String(b.to_string()),
+                    Some(b) => ValueJSON::Bool(b),
                     None => panic!("could not parse bool"),
                 }
             } else if v.is_null() {
                 match v.as_null() {
-                    Some(_n) => ValueJSON::String("null".to_string()),
+                    Some(_) => ValueJSON::Null,
                     None => panic!("could not parse null"),
                 }
             } else if v.is_i64() {
